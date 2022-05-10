@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import tacos.Ingredient;
 import tacos.data.IngredientRepository;
 
+import java.util.Optional;
+
 //스프링에 의해 자동 생성 및 주입되는 빈으로 생성
 @Component
 public class IngredientByIdConverter 
@@ -20,6 +22,9 @@ implements Converter<String, Ingredient> {
 
     @Override
     public Ingredient convert(String source) {
-        return ingredientRepository.findById(source);
+        Optional<Ingredient> optionalIngredient = ingredientRepository.findById(source);
+        return optionalIngredient.isPresent() ?
+                optionalIngredient.get() : null;
+
     }
 }
