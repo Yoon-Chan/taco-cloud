@@ -11,10 +11,13 @@ import tacos.Ingredient;
 import tacos.Ingredient.Type;
 import tacos.Order;
 import tacos.Taco;
+import tacos.User;
 import tacos.data.IngredientRepository;
 import tacos.data.TacoRepository;
+import tacos.data.UserRepository;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,15 +41,18 @@ public class DesignTacoController {
 
     private TacoRepository tacoRepo;
 
+    private UserRepository userRepository;
+
     @Autowired
     public DesignTacoController(IngredientRepository ingredientRepository
-    , TacoRepository tacoRepo){
+    , TacoRepository tacoRepo, UserRepository userRepository){
         this.ingredientRepository = ingredientRepository;
         this.tacoRepo = tacoRepo;
+        this.userRepository = userRepository;
     }
 
     @GetMapping
-    public String showDesignForm(Model model){
+    public String showDesignForm(Model model, Principal principal){
 
         List<Ingredient> ingredients = new ArrayList<>();
         ingredientRepository.findAll().forEach(i-> ingredients.add(i));
@@ -57,8 +63,10 @@ public class DesignTacoController {
                     filterByType(ingredients, type));
         }
 
-        model.addAttribute("taco", new Taco());
-
+        //  model.addAttribute("taco", new Taco());
+        String username = principal.getName();
+        User user = userRepository.findByUsername(username);
+        model.addAttribute("user", user);
         //모델 데이터를 브라우저에 나타내는 데 사용될 뷰의 논리적인 이름.
         return "design";
     }
